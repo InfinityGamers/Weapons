@@ -7,5 +7,5 @@ api:
 startup: POSTWORLD
 
 permissions:
-   land.protector.command.p1:
+   command.weapon:
       default: op
