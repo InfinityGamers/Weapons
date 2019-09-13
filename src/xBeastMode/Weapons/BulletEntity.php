@@ -43,7 +43,7 @@ class BulletEntity extends ItemEntity{
                                 $rad = GunData::EXPLODE[$this->gunType];
 
                                 $explode = new Explosion($this, $rad);
-                                $explode->explodeA();
+                                $explode->explodeB();
                         }
 
                         $this->flagForDespawn();
