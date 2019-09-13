@@ -1,0 +1,11 @@
+name: Weapons
+author: xBeastMode
+version: 1.12.0c
+main: xBeastMode\Weapons\Weapons
+api:
+- 3.0.0
+startup: POSTWORLD
+
+permissions:
+   land.protector.command.p1:
+      default: op
