@@ -1,5 +1,7 @@
 <?php
+
 namespace xBeastMode\Weapons;
+
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -7,6 +9,7 @@ use pocketmine\level\Explosion;
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
+
 class BulletEntity extends ItemEntity{
         /** @var string */
         public $gunType;
@@ -25,7 +28,8 @@ class BulletEntity extends ItemEntity{
                                 $rad = GunData::EXPLODE[$this->gunType];
 
                                 $explode = new Explosion($this, $rad);
-                                $explode->explodeB();
+                                if(isset(GunData::TERRADMG[$this->gunType]) && GunData::TERRADMG[$this->gunType] === true) $explode->explodeA();
+								$explode->explodeB();
                         }
                 }
                 return parent::onUpdate($currentTick);

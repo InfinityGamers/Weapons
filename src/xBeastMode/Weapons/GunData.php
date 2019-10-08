@@ -45,4 +45,8 @@ interface GunData{
         const EXPLODE = [
             "panzerfaust" => 5
         ];
+		
+        const TERRADMG = [
+            "panzerfaust" => true
+        ];
 }
