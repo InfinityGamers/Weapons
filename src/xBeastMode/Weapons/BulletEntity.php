@@ -18,13 +18,14 @@ class BulletEntity extends ItemEntity{
         }
 
         public function onUpdate(int $currentTick): bool{
-                if($this->onGround){
+                if($this->onGround && $this->gunType !== null){
                         $this->flagForDespawn();
 
-                        if(isset(GunData::EXPLODE[$this->gunType])){
-                                $rad = GunData::EXPLODE[$this->gunType];
+                        if(GunData::getExplodes($this->gunType)){
+                                $rad = GunData::getRadius($this->gunType);
 
                                 $explode = new Explosion($this, $rad);
+                                if(GunData::getAffectsBlocks($this->gunType)) $explode->explodeA();
                                 $explode->explodeB();
                         }
                 }
@@ -32,17 +33,18 @@ class BulletEntity extends ItemEntity{
         }
 
         public function onCollideWithPlayer(Player $player): void{
-                if(!$this->onGround){
+                if(!$this->onGround && $this->gunType !== null){
                         if($player === $this->exempt) return;
 
-                        $e = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_ENTITY_ATTACK, GunData::DAMAGES[$this->gunType]);
+                        $e = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_ENTITY_ATTACK, GunData::getDamage($this->gunType));
                         $e->setAttackCooldown(0);
                         $player->attack($e);
 
-                        if(isset(GunData::EXPLODE[$this->gunType])){
-                                $rad = GunData::EXPLODE[$this->gunType];
+                        if(GunData::getExplodes($this->gunType)){
+                                $rad = GunData::getRadius($this->gunType);
 
                                 $explode = new Explosion($this, $rad);
+                                if(GunData::getAffectsBlocks($this->gunType)) $explode->explodeA();
                                 $explode->explodeB();
                         }
 

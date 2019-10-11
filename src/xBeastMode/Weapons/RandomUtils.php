@@ -16,6 +16,25 @@ class RandomUtils{
         }
 
         /**
+         * @param $var
+         *
+         * @return bool
+         */
+        public static function toBool($var) {
+                if (!is_string($var)) return (bool) $var;
+                switch (strtolower($var)) {
+                        case '1':
+                        case 'true':
+                        case 'on':
+                        case 'yes':
+                        case 'y':
+                                return true;
+                        default:
+                                return false;
+                }
+        }
+
+        /**
          * @param string   $soundName
          * @param Position $position
          * @param int      $volume

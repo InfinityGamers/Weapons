@@ -15,6 +15,10 @@ class Weapons extends PluginBase{
 
                 $this->getServer()->getCommandMap()->register("weapons", new WeaponCommand($this));
                 $this->getServer()->getPluginManager()->registerEvents(new WeaponsListener($this), $this);
+
+                $this->saveDefaultConfig();
+
+                GunData::parseGunData($this->getConfig()->getAll());
         }
 
         /**
@@ -30,7 +34,7 @@ class Weapons extends PluginBase{
                         $gunType = $gun->getCustomBlockData()->getString("gunType");
 
                         $task = new FireGunTask($this, $player, $gun);
-                        $this->getScheduler()->scheduleRepeatingTask($task, GunData::FIRE_RATES[$gunType]);
+                        $this->getScheduler()->scheduleRepeatingTask($task, GunData::getFireRate($gunType));
 
                         $this->tasks[spl_object_hash($player)] = $task;
                 }

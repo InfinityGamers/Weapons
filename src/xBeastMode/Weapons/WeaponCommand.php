@@ -3,7 +3,6 @@ namespace xBeastMode\Weapons;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
-use pocketmine\item\Item;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
@@ -49,7 +48,7 @@ class WeaponCommand extends Command implements PluginIdentifiableCommand{
                 }
 
                 if(strtolower($args[0]) === "guns"){
-                        $sender->sendMessage(RandomUtils::colorMessage("&eGun list: &f" . implode(", ", GunData::GUN_LIST)));
+                        $sender->sendMessage(RandomUtils::colorMessage("&eGun list: &f" . implode(", ", GunData::getGunList())));
                         return true;
                 }elseif(strtolower($args[0]) === "gun"){
                         if(count($args) < 2){
@@ -59,7 +58,7 @@ class WeaponCommand extends Command implements PluginIdentifiableCommand{
 
                         $gun = strtolower($args[1]);
 
-                        if(!in_array($gun, GunData::GUN_LIST)){
+                        if(!in_array($gun, GunData::getGunList())){
                                 $sender->sendMessage(TextFormat::RED . "$args[1] is not a known gun.");
                                 return false;
                         }
@@ -71,7 +70,7 @@ class WeaponCommand extends Command implements PluginIdentifiableCommand{
                                 return false;
                         }
 
-                        $item = Item::get(Item::HORSE_ARMOR_IRON);
+                        $item = GunData::getGunItem($gun);
                         $item->setCustomName(RandomUtils::colorMessage("&l&4{$gun} &7[Right Click]"));
                         $item->setCustomBlockData(new CompoundTag("", [new StringTag("gunType", $gun)]));
 
@@ -92,7 +91,7 @@ class WeaponCommand extends Command implements PluginIdentifiableCommand{
                                 return false;
                         }
 
-                        $item = Item::get(Item::FIREBALL);
+                        $item = GunData::getAmmoItem();
                         $item->setCustomName(RandomUtils::colorMessage("&l&4AMMO"));
                         $item->setCustomBlockData(new CompoundTag("", [new IntTag("ammoAmount", $amount)]));
 

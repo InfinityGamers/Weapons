@@ -98,7 +98,7 @@ class FireGunTask extends Task{
 
                 $this->player->sendTip("§c{$this->amount} rounds left");
 
-                RandomUtils::playSound("firework.blast", $this->player, 500, GunData::SHOT_PITCH[$gunType]);
+                RandomUtils::playSound("firework.blast", $this->player, 500, GunData::getShotPitch($gunType));
                 --$this->amount;
         }
 }

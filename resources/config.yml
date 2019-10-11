@@ -1,0 +1,14 @@
+---
+# == AMMO ITEM FORMAT ==
+# ITEM ID:ITEM META
+- "385:0"
+# == GUN LIST FORMAT ==
+# GUN NAME:ITEM ID:ITEM META:FIRE RATE:SHOT PITCH:DAMAGE:FULL AUTO:EXPLODES:EXPLOSION RADIUS:AFFECTS BLOCKS
+# FIRE RATE 1 = 20 shots per second
+- "mg42:417:0:1:0.4:1:true:false:0:false"
+- "mp40:417:0:3:0.7:1:true:false:0:false"
+- "minigun:417:0:0:0.6:4:true:false:0:false"
+- "thompson:417:0:2:0.5:1:true:false:0:false"
+- "m1911:417:0:0:0.5:1:false:false:0:false"
+- "panzerfaust:417:0:0:0.1:1:false:true:5:false"
+...

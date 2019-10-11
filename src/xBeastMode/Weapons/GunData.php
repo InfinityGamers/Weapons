@@ -1,48 +1,148 @@
 <?php
 namespace xBeastMode\Weapons;
-interface GunData{
-        const GUN_LIST = [
-            "mg42",
-            "mp40",
-            "minigun",
-            "thompson",
-            "m1911",
-            "panzerfaust"
-        ];
+use pocketmine\item\Item;
 
-        const FIRE_RATES = [
-            "mg42" => 1,
-            "mp40" => 3,
-            "minigun" => 0,
-            "thompson" => 2,
-        ];
+class GunData{
+        /** @var int[] */
+        protected static $ammoItem = [];
+        /** @var string[][]|int[][]|float[][] */
+        protected static $gunData = [];
 
-        const SHOT_PITCH = [
-            "mg42" => 0.4,
-            "mp40" => 0.7,
-            "minigun" => 0.6,
-            "thompson" => 0.5,
-            "m1911" => 0.5,
-            "panzerfaust" => 0.1
-        ];
+        /**
+         * @param array $config
+         */
+        public static function parseGunData(array $config){
+                self::$ammoItem = explode(":", array_shift($config));
 
-        const DAMAGES = [
-            "mg42" => 1,
-            "mp40" => 1,
-            "minigun" => 4,
-            "thompson" => 1,
-            "m1911" => 1,
-            "panzerfaust" => 1,
-        ];
+                foreach($config as $gunData){
+                        list(
+                            $gunType,
+                            $itemId,
+                            $itemMeta,
+                            $fireRate,
+                            $shotPitch,
+                            $damage,
+                            $fullAuto,
+                            $explodes,
+                            $radius,
+                            $affectBlocks
+                            ) = explode(":", $gunData);
 
-        const FULL_AUTO = [
-            "mg42",
-            "mp40",
-            "minigun",
-            "thompson"
-        ];
+                        self::$gunData[$gunType] = [
+                            (int) $itemId,
+                            (int) $itemMeta,
+                            (int) $fireRate,
+                            (float) $shotPitch,
+                            (int) $damage,
+                            RandomUtils::toBool($fullAuto),
+                            RandomUtils::toBool($explodes),
+                            (int) $radius,
+                            RandomUtils::toBool($affectBlocks)
+                        ];
+                }
+        }
 
-        const EXPLODE = [
-            "panzerfaust" => 5
-        ];
+        /**
+         * @return Item
+         */
+        public static function getAmmoItem(): Item{
+                return Item::get((int) self::$ammoItem[0], (int) self::$ammoItem[1]);
+        }
+
+        /**
+         * @return array
+         */
+        public static function getGunList(): array{
+                return array_keys(self::$gunData);
+        }
+
+        /**
+         * @param string $gunType
+         *
+         * @return int
+         */
+        public static function getItemId(string $gunType): int{
+                return isset(self::$gunData[$gunType]) ? self::$gunData[$gunType][0] : -1;
+        }
+
+        /**
+         * @param string $gunType
+         *
+         * @return int
+         */
+        public static function getItemMeta(string $gunType): int{
+                return isset(self::$gunData[$gunType]) ? self::$gunData[$gunType][1] : -1;
+        }
+
+        /**
+         * @param string $gunType
+         *
+         * @return Item
+         */
+        public static function getGunItem(string $gunType): Item{
+                return Item::get(self::getItemId($gunType), self::getItemMeta($gunType));
+        }
+
+        /**
+         * @param string $gunType
+         *
+         * @return int
+         */
+        public static function getFireRate(string $gunType): int{
+                return isset(self::$gunData[$gunType]) ? self::$gunData[$gunType][2] : -1;
+        }
+
+        /**
+         * @param string $gunType
+         *
+         * @return float
+         */
+        public static function getShotPitch(string $gunType): float {
+                return isset(self::$gunData[$gunType]) ? self::$gunData[$gunType][3] : 0.0;
+        }
+
+        /**
+         * @param string $gunType
+         *
+         * @return int
+         */
+        public static function getDamage(string $gunType): int{
+                return isset(self::$gunData[$gunType]) ? self::$gunData[$gunType][4] : -1;
+        }
+
+        /**
+         * @param string $gunType
+         *
+         * @return bool
+         */
+        public static function getFullAuto(string $gunType): bool {
+                return isset(self::$gunData[$gunType]) ? self::$gunData[$gunType][5] : false;
+        }
+
+        /**
+         * @param string $gunType
+         *
+         * @return bool
+         */
+        public static function getExplodes(string $gunType): bool {
+                return isset(self::$gunData[$gunType]) ? self::$gunData[$gunType][6] : false;
+        }
+
+        /**
+         * @param string $gunType
+         *
+         * @return int
+         */
+        public static function getRadius(string $gunType): int{
+                return isset(self::$gunData[$gunType]) ? self::$gunData[$gunType][7] : -1;
+        }
+
+        /**
+         * @param string $gunType
+         *
+         * @return bool
+         */
+        public static function getAffectsBlocks(string $gunType): bool {
+                return isset(self::$gunData[$gunType]) ? self::$gunData[$gunType][8] : false;
+        }
 }
