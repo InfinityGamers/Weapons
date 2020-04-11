@@ -72,7 +72,7 @@ class WeaponCommand extends Command implements PluginIdentifiableCommand{
 
                         $item = GunData::getGunItem($gun);
                         $item->setCustomName(RandomUtils::colorMessage("&l&4{$gun} &7[Right Click]"));
-                        $item->setCustomBlockData(new CompoundTag("", [new StringTag("gunType", $gun)]));
+                        $item->setCustomBlockData(new CompoundTag("", [new StringTag(GunData::GUN_TAG, $gun)]));
 
                         $player->getInventory()->addItem($item);
 
@@ -93,10 +93,15 @@ class WeaponCommand extends Command implements PluginIdentifiableCommand{
 
                         $item = GunData::getAmmoItem();
                         $item->setCustomName(RandomUtils::colorMessage("&l&4AMMO"));
-                        $item->setCustomBlockData(new CompoundTag("", [new IntTag("ammoAmount", $amount)]));
+                        $item->setCustomBlockData(new CompoundTag("", [new IntTag(GunData::AMMO_TAG, $amount)]));
 
                         $player->getInventory()->addItem($item);
                         return true;
+                }else{
+                        $sender->sendMessage(RandomUtils::colorMessage("&c--=[&d&lWeapons&r&c]=--"));
+                        $sender->sendMessage(RandomUtils::colorMessage("&e/weapon guns : &flist guns"));
+                        $sender->sendMessage(RandomUtils::colorMessage("&e/weapon gun <gun> [player] : &fgive a weapon"));
+                        $sender->sendMessage(RandomUtils::colorMessage("&e/weapon ammo <amount> [player] : &fgives a player ammo"));
                 }
 
                 return true;

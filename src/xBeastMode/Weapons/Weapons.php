@@ -2,13 +2,18 @@
 namespace xBeastMode\Weapons;
 use pocketmine\entity\Entity;
 use pocketmine\item\Item;
+use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
+use pocketmine\utils\Config;
 class Weapons extends PluginBase{
         /** @var FireGunTask[] */
         protected $tasks = [];
+
+        /** @var string[] */
+        public $bannedWorlds = [];
 
         public function onEnable(){
                 Entity::registerEntity(BulletEntity::class);
@@ -17,8 +22,9 @@ class Weapons extends PluginBase{
                 $this->getServer()->getPluginManager()->registerEvents(new WeaponsListener($this), $this);
 
                 $this->saveDefaultConfig();
-
                 GunData::parseGunData($this->getConfig()->getAll());
+
+                $this->bannedWorlds = (new Config($this->getDataFolder() . "bannedWorlds.yml", Config::YAML, []))->getAll();
         }
 
         /**
@@ -31,7 +37,7 @@ class Weapons extends PluginBase{
                         unset($this->tasks[spl_object_hash($player)]);
                 }else{
                         $gun = $player->getInventory()->getItemInHand();
-                        $gunType = $gun->getCustomBlockData()->getString("gunType");
+                        $gunType = $gun->getCustomBlockData()->getString(GunData::GUN_TAG);
 
                         $task = new FireGunTask($this, $player, $gun);
                         $this->getScheduler()->scheduleRepeatingTask($task, GunData::getFireRate($gunType));
@@ -52,7 +58,7 @@ class Weapons extends PluginBase{
                 if($ammo === null){
                         $slot = 0;
                         foreach($player->getInventory()->getContents() as $i => $item){
-                                if($item->hasCustomBlockData() && $item->getCustomBlockData()->hasTag("ammoAmount")){
+                                if(GunData::isAmmoItem($item)){
                                         $slot = $i;
                                         $ammo = $item;
                                         break;
@@ -60,25 +66,25 @@ class Weapons extends PluginBase{
                         }
                         if($ammo === null) return false;
 
-                        $amount = $ammo->getCustomBlockData()->getInt("ammoAmount");
+                        $amount = $ammo->getCustomBlockData()->getInt(GunData::AMMO_TAG);
 
                         --$amount;
                         if($amount <= 0){
                                 if($ammo->count > 1){
                                         $player->getInventory()->setItem($slot, $ammo->setCount($ammo->count - 1));
                                 }else{
-                                        $ammo->setCustomBlockData(new CompoundTag("", [new IntTag("ammoAmount", $amount)]));
+                                        $ammo->setCustomBlockData(new CompoundTag("", [new IntTag(GunData::AMMO_TAG, $amount)]));
                                         $player->getInventory()->setItem($slot, $ammo->setCount($ammo->count - 1));
                                 }
                         }else{
-                                $ammo->setCustomBlockData(new CompoundTag("", [new IntTag("ammoAmount", $amount)]));
+                                $ammo->setCustomBlockData(new CompoundTag("", [new IntTag(GunData::AMMO_TAG, $amount)]));
                                 $player->getInventory()->setItem($slot, $ammo);
                         }
 
                         if($tip && $amount >= 1) $player->sendTip("§c{$amount} rounds left");
                 }
 
-                $gunType = $gun->getCustomBlockData()->getString("gunType");;
+                $gunType = $gun->getCustomBlockData()->getString(GunData::GUN_TAG);;
 
                 $itemTag = $ammo->setCount(1)->nbtSerialize();
                 $itemTag->setName("Item");
@@ -97,5 +103,15 @@ class Weapons extends PluginBase{
                 }
 
                 return true;
+        }
+
+        /**
+         * @param Item  $item
+         * @param Level $target
+         *
+         * @return bool
+         */
+        public function isGunAllowed(Item $item, Level $target): bool{
+                return GunData::isGunItem($item) && !in_array($target->getName(), $this->bannedWorlds);
         }
 }
