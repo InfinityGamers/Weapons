@@ -3,9 +3,9 @@ author: xBeastMode
 version: 1.12.0c
 main: xBeastMode\Weapons\Weapons
 api:
-- 3.0.0
+- 3.01.0
 startup: POSTWORLD
 
 permissions:
    command.weapon:
-      default: op
+      default: 
